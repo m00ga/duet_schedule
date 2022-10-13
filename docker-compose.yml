@@ -8,9 +8,35 @@ services:
         container_name: "django"
         command: python manage.py runserver 0.0.0.0:8000
         volumes:
-            -   ./django/:/usr/src/app
+            - ./django/:/usr/src/app
         ports:
-            -   "80:8000"
+            - "80:8000"
         env_file:
-            -   .env.dev
+            - .env.dev
+        depends_on:
+            - postgres
+        networks:
+            - frontend
+            - backend
+
+    postgres:
+        image: postgres:alpine3.16
+        container_name: "postgres"
+        env_file:
+            - .env.dev
+        volumes:
+            - postgres_volume:/var/lib/postgresql/data
+        expose:
+            - 5432
+        networks:
+            - backend
+
+
+volumes:
+    postgres_volume:
+
+networks:
+    backend:
+        internal: true
+    frontend:
 
